@@ -17,6 +17,7 @@ dependencies:
   - ipykernel
   - ipywidgets
   - git
+  - boto3
 
   - pip:
     - $LITHOPS
