@@ -7,7 +7,6 @@ blacklist = {
 }
 
 def filter_insult(message):
-    # Dividir por saltos de línea o por frases terminadas en ., ! o ?
     raw_sentences = re.split(r'(?:[.!?])?\s*\n+|\s*(?<=[.!?])\s+', message.strip())
 
     formatted_sentences = []

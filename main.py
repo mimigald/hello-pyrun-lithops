@@ -6,7 +6,7 @@ def main():
     bucket_name = 'mimigald-bucket'
     s3 = boto3.client('s3')
 
-    # Listar los objetos dentro del bucket
+    # Listar los ficheros dentro del bucket
     response = s3.list_objects_v2(Bucket=bucket_name, Prefix='')
 
     # Preparar iterdata con las URIs completas de los archivos S3
@@ -14,28 +14,27 @@ def main():
     for obj in response.get('Contents', []):
         key = obj['Key']
         print(f'Found object: {key}')
-        iterdata.append(f's3://{bucket_name}/{key}')  # Agregar la URI completa del objeto
+        iterdata.append(f's3://{bucket_name}/{key}')  # Agregar URI
 
-    # Verificar que iterdata contiene las URIs correctas
     print(iterdata)
 
-    # Crear un ejecutor de funciones de Lithops
+    # Creación de un ejecutor de funciones de Lithops
     fexec = lithops.FunctionExecutor(log_level='INFO')
 
-    # Ejecutar el proceso de map-reduce
+    # Ejecución el proceso de map-reduce
     fexec.map_reduce(my_map_function, iterdata, my_reduce_function)
 
-    # Obtener el resultado final
+    # Obtención el resultado final
     result = fexec.get_result()
     print("Censorship complete!")
     print(f"Total number of insults found: {result['total_insults']}")
 
-    # Opcionalmente, puedes subir los textos censurados de nuevo a S3
-    for item in final_result['censored_texts']:
+    # Subir los ficheros con los resultados al bucket de S3
+    for item in result['censored_data']:
         censored_file_key = f"censored_{item['key']}"
         censored_text = item['text']
         
-        # Asegúrate de terminar con \n si es necesario
+        # Me aseguro de terminar con \n si es necesario
         if not censored_text.endswith('\n'):
             censored_text += '\n'
             
