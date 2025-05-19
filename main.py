@@ -31,9 +31,15 @@ def main():
     print(f"Total number of insults found: {result['total_insults']}")
 
     # Opcionalmente, puedes subir los textos censurados de nuevo a S3
-    for item in final_result['censored_data']:
+    for item in final_result['censored_texts']:
         censored_file_key = f"censored_{item['key']}"
-        s3.put_object(Bucket=bucket_name, Key=censored_file_key, Body=item['text'] + '\n')
+        censored_text = item['text']
+        
+        # Asegúrate de terminar con \n si es necesario
+        if not censored_text.endswith('\n'):
+            censored_text += '\n'
+            
+        s3.put_object(Bucket=bucket_name, Key=censored_file_key, Body=censored_text)
 
     print("Censored texts uploaded to S3.")
 
